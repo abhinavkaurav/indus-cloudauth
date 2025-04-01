@@ -1,5 +1,6 @@
 __pycache__
 .pycrypto
+.pypirc
 env
 .vscode
 .pytest_cache
