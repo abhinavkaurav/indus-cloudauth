@@ -1,0 +1,11 @@
+__pycache__
+.pycrypto
+env
+.vscode
+.pytest_cache
+dist
+local
+*.egg-info
+.coverage
+build
+dist
