@@ -107,7 +107,7 @@ def test_auth_cloud_aws(keyname, cloud):
     """
     mock_get_secret = MagicMock(return_value=str(os.urandom(8)))
     secret_provider = {cloud_provider.AWS: mock_get_secret}
-    with patch("indus_cloudauth.auth.secret_provider", new=secret_provider):
+    with patch.dict("indus_cloudauth.auth.secret_provider", secret_provider, True):
         _auth = auth.use_hmac256_token(keyname=keyname, cloud=cloud)
         token = _auth.generate_token()
         valid, auth_id, message = _auth.validate_token(token)

@@ -5,9 +5,9 @@
 
 * Standardizes authentication with a consistent interface for token management and authentication.
 * Simplifies secret key retrieval from AWS Secrets Manager. Azure Key Vault, GCP Secret Manager and more coming soon.
-* Enhances security by eliminating manual credential handling
+* Enhances security by eliminating manual credential handling.
 * Provided option to encrypt more information using `auth_id` and set token expiry using `expiry_seconds`.
-* Reduces boilerplate code with easy-to-use methods for token generation and validation
+* Reduces boilerplate code with easy-to-use methods for token generation and validation.
 
 ## Requirements
 
@@ -56,7 +56,7 @@ valid, auth_id, message = _auth.validate_token(token) # validates your token
 ```
 
 
-### Example 4 - using token expiry_time and auth_id.
+### Example 4 - using token expiry_time and auth_id
 
 By default the token expiry time set to 1 hour. You can encrypt any useful information using auth_id.
 
