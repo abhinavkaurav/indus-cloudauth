@@ -6,4 +6,4 @@ from indus_cloudauth.auth import Auth
 cloud_provider = CloudProvider
 auth = Auth
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'

@@ -39,7 +39,6 @@ class Auth:
                 "Must provide the keyname if not provided secretkey"
             )
         if cloud not in secret_provider:
-            print(secret_provider)
             raise TypeError("Must provide one of cloud provider for keyname: 'local', 'aws'")
 
         return HMACSHA256(secret_provider.get(cloud)(keyname))

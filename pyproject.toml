@@ -1,6 +1,6 @@
 [project]
 name = "indus-cloudauth"
-version = "0.1.0"
+version = "0.1.1"
 description = "indus-cloudauth is a secure, unified solution for generating and validating authentication tokens across multiple cloud platforms."
 authors = [
     {name = "abhinavkaurav"},
