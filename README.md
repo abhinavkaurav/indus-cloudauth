@@ -1,5 +1,8 @@
-# indus-cloudauth
-``indus-cloudauth`` is a secure, unified solution for generating and validating authentication tokens across multiple cloud platforms.
+# secretauth
+
+[![PyPI version](https://badge.fury.io/py/secretauth.svg)](https://badge.fury.io/py/secretauth)
+
+``secretauth`` is a secure, unified solution for generating and validating authentication tokens using secret from multiple cloud platforms.
 
 ## Features
 
@@ -13,62 +16,68 @@
 
 Python 3.9+
 
+## Installallation
+
+```console
+$ pip install secretauth
+```
+
 ## Usage
 
-You can use the `indus-cloudauth` package in your Python code to generate authentication token using cloud provider of your choice for accessing the secret.
+You can use the `secretauth` package in your Python code to generate authentication token using cloud provider of your choice for accessing the secret.
 
 ### Example 1 - using secret key stored in aws secret manager
 
 It uses your local aws credentials and configs from `~/.aws` see [Using Boto3](https://github.com/boto/boto3). Only key stored as plaintext will work.
 
 ```python
-from indus_cloudauth import cloud_provider, auth
+from secretauth import SecretProvider, Auth
 
-keyname = "keyname_in_your_aws_secret_manager"
-_auth = auth.use_hmac256_token(keyname=keyname, cloud=cloud_provider.AWS) # initializes the auth module
+secret_name = "secret_name_in_your_aws_secret_manager"
+_auth = Auth.use_hmac256_token(secret_name=secret_name, secret_provider=SecretProvider.AWS) # initializes the auth module
 token = _auth.generate_token() # generates your token
-valid, auth_id, message = _auth.validate_token(token) # validates your token
+valid, auth_id, msg = _auth.validate_token(token) # validates your token
 
 ```
 
 ### Example 2 - using secret key stored in environment variable
 
 ```python
-from indus_cloudauth import cloud_provider, auth
+from secretauth import SecretProvider, Auth
 
-keyname = "keyname_in_your_enviroment"
-_auth = auth.use_hmac256_token(keyname=keyname, cloud=cloud_provider.LOCAL) # initializes the auth module
+secret_name = "secret_name_in_your_enviroment"
+_auth = Auth.use_hmac256_token(secret_name=secret_name, secret_provider=SecretProvider.LOCAL) # initializes the auth module
 token = _auth.generate_token() # generates your token
-valid, auth_id, message = _auth.validate_token(token) # validates your token
+valid, auth_id, msg = _auth.validate_token(token) # validates your token
 
 ```
 
 ### Example 3 - using secret key directly
 
 ```python
-from indus_cloudauth import cloud_provider, auth
+from secretauth import SecretProvider, Auth
 
-secret_key = "anysecretkeyyoucanpass"
-_auth = auth.use_hmac256_token(secretkey=secretkey) # initializes the auth module
+secret_key = "any_secret_key_can_be_used"
+_auth = Auth.use_hmac256_token(secret_key=secret_key) # initializes the auth module
 token = _auth.generate_token() # generates your token
-valid, auth_id, message = _auth.validate_token(token) # validates your token
+valid, auth_id, msg = _auth.validate_token(token) # validates your token
 
 ```
 
 
-### Example 4 - using token expiry_time and auth_id
+### Example 4 - using token expiry_seconds and auth_id
 
 By default the token expiry time set to 1 hour. You can encrypt any useful information using auth_id.
 
 ```python
-from indus_cloudauth import cloud_provider, auth
+from secretauth import SecretProvider, Auth
 
-keyname = "keyname_in_your_enviroment"
-auth_id = "userid_etc"
+secret_name = "secret_name_in_your_enviroment"
+authid = "userid_etc"
 expiry = 60 # 1 minute
-_auth = auth.use_hmac256_token(keyname=keyname, cloud=cloud_provider.LOCAL) # initializes the auth module
+_auth = Auth.use_hmac256_token(secret_name=secret_name, secret_provider=SecretProvider.LOCAL) # initializes the auth module
 token = _auth.generate_token(auth_id=authid, expiry_seconds=expiry) # generates your token
-valid, auth_id, message = _auth.validate_token(token) # validates your token
+valid, auth_id, msg = _auth.validate_token(token) # validates your token
 
 ```
 

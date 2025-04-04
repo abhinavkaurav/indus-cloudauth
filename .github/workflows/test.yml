@@ -1,7 +1,12 @@
 # .github/workflows/test.yml
 name: Python Tests
 
-on: [push, pull_request]
+on: 
+  push:
+    paths:
+      - secretauth/**
+      - tests/**
+  pull_request:
 
 jobs:
   pytest:

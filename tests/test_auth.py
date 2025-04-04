@@ -1,114 +1,118 @@
-"""indus-cloudauth test module"""
+"""indus-secret_providerAuth test module"""
 import os
 import time
 from unittest.mock import patch, MagicMock
 import pytest
-from indus_cloudauth import cloud_provider, auth
+from secretauth import SecretProvider, Auth
 
 # Test cases for each use case
 
 
-@pytest.mark.parametrize("secretkey", [
+@pytest.mark.parametrize("secret_key", [
     ("")
 ])
-def test_auth_valuerror_keyname_not_provided(secretkey):
+def test_auth_valuerror_secret_name_not_provided(secret_key):
     """
-    Test the auth keyname validation.
+    Test the Auth secret_name validation.
     """
     with pytest.raises(ValueError):
-        auth.use_hmac256_token(secretkey=secretkey)
+        Auth.use_hmac256_token(secret_key=secret_key)
 
 
-@pytest.mark.parametrize("keyname", [
+@pytest.mark.parametrize("secret_name", [
     ("")
 ])
-def test_auth_valuerror_keyname_empty(keyname):
+def test_auth_valuerror_secret_name_empty(secret_name):
     """
-    Test the auth keyname validation.
+    Test the Auth secret_name validation.
     """
     with pytest.raises(ValueError):
-        auth.use_hmac256_token(keyname=keyname)
+        Auth.use_hmac256_token(secret_name=secret_name)
 
 
-@pytest.mark.parametrize("keyname, cloud", [
-    ("mysecretkeyid", "")
+@pytest.mark.parametrize("secret_name, secret_provider", [
+    ("mysecret_keyid", "")
 ])
-def test_auth_typeerror_cloud_not_provided(keyname, cloud):
+def test_auth_typeerror_secret_provider_not_provided(secret_name, secret_provider):
     """
-    Test the auth cloud validation.
+    Test the Auth secret_provider validation.
     """
     with pytest.raises(TypeError):
-        auth.use_hmac256_token(keyname=keyname, cloud=cloud)
+        Auth.use_hmac256_token(secret_name=secret_name,
+                               secret_provider=secret_provider)
 
 
-@pytest.mark.parametrize("secretkey", [
+@pytest.mark.parametrize("secret_key", [
     ("qwertyuioA"),
     ("asdfghjklB"),
     ("zxcvbnmvC")
 ])
-def test_auth_secrekkey(secretkey):
+def test_auth_secrekkey(secret_key):
     """
-    Test the auth token using secretkey.
+    Test the Auth token using secret_key.
     """
-    _auth = auth.use_hmac256_token(secretkey=secretkey)
+    _auth = Auth.use_hmac256_token(secret_key=secret_key)
     token = _auth.generate_token()
-    valid, auth_id, message = _auth.validate_token(token)
+    valid, auth_id, msg = _auth.validate_token(token)
     assert valid is True
 
 
 @pytest.fixture
 def set_env_var(monkeypatch):
+    """mocks enviroment variable"""
     def _set_env_var(key):
         value = str(os.urandom(8)) + str(hash(key))
         monkeypatch.setenv(key,  value)
     return _set_env_var
 
 
-@pytest.mark.parametrize("keyname, cloud", [
-    ("mysecretkeyid1", cloud_provider.LOCAL),
-    ("mysecretkeyid2", cloud_provider.LOCAL)
+@pytest.mark.parametrize("secret_name, secret_provider", [
+    ("mysecret_name1", SecretProvider.LOCAL),
+    ("mysecret_name2", SecretProvider.LOCAL)
 ])
-def test_auth_cloud_local(set_env_var, keyname, cloud):
+def test_auth_secret_provider_local(set_env_var, secret_name, secret_provider):
     """
-    Test the auth token using cloud= 'local'.
+    Test the Auth token using secret_provider= 'local'.
     """
-    set_env_var(keyname)
-    _auth = auth.use_hmac256_token(keyname=keyname, cloud=cloud)
+    set_env_var(secret_name)
+    _auth = Auth.use_hmac256_token(
+        secret_name=secret_name, secret_provider=secret_provider)
     token = _auth.generate_token()
-    valid, auth_id, message = _auth.validate_token(token)
+    valid, auth_id, msg = _auth.validate_token(token)
     assert valid is True
 
 
-@pytest.mark.parametrize("secretkey, authid, expiry", [
+@pytest.mark.parametrize("secret_key, authid, expiry", [
     (str(os.urandom(8)), "auth1", 2),
     (str(os.urandom(8)), "auth2", 4)
 ])
-def test_auth_expiry(secretkey, authid, expiry):
+def test_auth_expiry(secret_key, authid, expiry):
     """
-    Test the auth token using authid and expiry.
+    Test the Auth token using authid and expiry.
     """
-    _auth = auth.use_hmac256_token(secretkey=secretkey)
+    _auth = Auth.use_hmac256_token(secret_key=secret_key)
     token = _auth.generate_token(auth_id=authid, expiry_seconds=expiry)
-    valid, auth_id, message = _auth.validate_token(token)
+    valid, auth_id, msg = _auth.validate_token(token)
     assert valid is True
     assert auth_id == authid
     time.sleep(expiry)
-    valid, auth_id, message = _auth.validate_token(token)
+    valid, auth_id, msg = _auth.validate_token(token)
     assert valid is False
     assert auth_id is None
 
 
-@pytest.mark.parametrize("keyname, cloud", [
-    ("dev/beta2/indus-clouthauth-secret", cloud_provider.AWS)
+@pytest.mark.parametrize("secret_name, secret_provider", [
+    ("dev/beta2/indus-clouthAuth-secret", SecretProvider.AWS)
 ])
-def test_auth_cloud_aws(keyname, cloud):
+def test_auth_secret_provider_aws(secret_name, secret_provider):
     """
-    Test the auth token using cloud= 'aws'.
+    Test the Auth token using secret_provider= 'aws'.
     """
     mock_get_secret = MagicMock(return_value=str(os.urandom(8)))
-    secret_provider = {cloud_provider.AWS: mock_get_secret}
-    with patch.dict("indus_cloudauth.cloud.secret_provider", secret_provider, True):
-        _auth = auth.use_hmac256_token(keyname=keyname, cloud=cloud)
+    secret_providers = {SecretProvider.AWS: mock_get_secret}
+    with patch.dict("secretauth.secret.secret_providers", secret_providers, True):
+        _auth = Auth.use_hmac256_token(
+            secret_name=secret_name, secret_provider=secret_provider)
         token = _auth.generate_token()
-        valid, auth_id, message = _auth.validate_token(token)
+        valid, auth_id, msg = _auth.validate_token(token)
         assert valid is True
