@@ -1,4 +1,4 @@
-"""indus-cloudauth hmacsha256 utility"""
+"""secretauth hmacsha256 utility"""
 import hashlib
 import hmac
 import time
@@ -8,7 +8,7 @@ from typing import Tuple, Optional
 
 
 class HMACSHA256:
-    """A secure authentocation using HMAC tokens with nonce, salt, and expiry.
+    """A secure authentication using HMAC tokens with nonce, salt, and expiry.
 
     This class provides methods to generate and validate authentication tokens using
     one-way hashing with HMAC-SHA256. Tokens include a nonce (for replay protection),
@@ -38,7 +38,7 @@ class HMACSHA256:
         self.secret_key = secret_key
         self.default_expiry = default_expiry
 
-    def generate_token(self, auth_id: str = "cl0udcrypt0",
+    def generate_token(self, auth_id: str = "",
                        expiry_seconds: Optional[int] = None) -> str:
         """Generate a secure authentication token.
 

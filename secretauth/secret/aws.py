@@ -1,4 +1,4 @@
-"""indus-cloudauth secret provider using aws"""
+"""secretauth using aws secret manager"""
 import json
 import boto3
 

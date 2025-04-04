@@ -1,6 +1,7 @@
-"""indus-cloudauth secret provider using local environment"""
+"""secretauth using environment variable"""
 import os
-from indus_cloudauth.exception.custom import EnvironmentVariableNotFoundError
+from secretauth.exception.custom import EnvironmentVariableNotFoundError
+
 
 def get_secret_from_env(env_var: str) -> str:
     """Retrieves a sensitive environment variable or raises descriptive exception.
@@ -23,14 +24,15 @@ def get_secret_from_env(env_var: str) -> str:
 
     Example:
         >>> os.environ["TEST_KEY"] = "secret123"
-        >>> get_secret("TEST_KEY")
+        >>> get_secret_from_env("TEST_KEY")
         'secret123'
 
-        >>> get_secret("MISSING_KEY")
+        >>> get_secret_from_env("MISSING_KEY")
         EnvironmentVariableNotFoundError: Required environment variable 'MISSING_KEY' not found...
     """
     if not isinstance(env_var, str) or not env_var.strip():
-        raise ValueError("Environment variable name must be a non-empty string")
+        raise ValueError(
+            "Environment variable name must be a non-empty string")
 
     value = os.getenv(env_var)
     if value is None or value == "":
